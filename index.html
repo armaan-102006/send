@@ -8,7 +8,7 @@
 let socket, watchId;
 
 function start() {
-  socket = new WebSocket('wss://953638f3a86d.ngrok-free.app'); // use your server IP
+  socket = new WebSocket('wss://953638f3a86d.ngrok-free.app/bus'); // use your server IP
 
   socket.onopen = () => {
     if ('geolocation' in navigator) {
@@ -45,6 +45,7 @@ function start() {
 </body>
 
 </html>
+
 
 
 
