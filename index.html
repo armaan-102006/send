@@ -29,7 +29,7 @@ function start() {
 }
 
 function startWatchPosition() {
-  socket = new WebSocket('wSs://366c7cb5c730.ngrok-free.app/bus');// put ur own ip
+  socket = new WebSocket('wss://366c7cb5c730.ngrok-free.app/bus');// put ur own ip
 
   socket.onopen = () => {
     watchId = navigator.geolocation.watchPosition(
@@ -63,4 +63,5 @@ function startWatchPosition() {
 
 </body>
 </html>
+
 
