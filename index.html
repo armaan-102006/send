@@ -4,48 +4,54 @@
 <body>
 <button onclick="start()">Start Sending Location</button>
 
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
 let socket, watchId;
 
 function start() {
-  socket = new WebSocket('wss://366c7cb5c730.ngrok-free.app/bus'); // use your server IP
-
-  socket.onopen = () => {
-    if ('geolocation' in navigator) {
-      watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude,
-              accuracy: pos.coords.accuracy,
-            }));
-          }
-        },
-        (err) => {
-          console.error('Geolocation error:', err);
-        },
-        { enableHighAccuracy: true }
-      );
-    } else {
-      alert('Geolocation not supported');
+  navigator.permissions.query({name:'geolocation'}).then(function(result) {
+    if (result.state === 'granted' || result.state === 'prompt') {
+      startWatchPosition();
+    } else if (result.state === 'denied') {
+      alert('Geolocation permission denied. Please enable it manually.');
     }
-  };
 
-  socket.onclose = () => {
+    result.onchange = function() {
+      if (result.state === 'granted') {
+        startWatchPosition();
+      }
+    };
+  });
+}
+
+function startWatchPosition() {
+  socket = io('http://366c7cb5c730.ngrok-free.app/bus:5000'); 
+
+  socket.on('connect', () => {
+    watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        socket.emit('location', {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+          speed: pos.coords.speed
+        });
+      },
+      (err) => {
+        console.error('Geolocation error:', err);
+      },
+      { enableHighAccuracy: true }
+    );
+  });
+
+  socket.on('disconnect', () => {
     if (watchId) navigator.geolocation.clearWatch(watchId);
-  };
-
-  socket.onerror = (err) => {
-    console.error('WebSocket error:', err);
-  };
+  });
 }
 </script>
 
 </body>
-
 </html>
-
 
 
 
