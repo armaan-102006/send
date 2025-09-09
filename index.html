@@ -18,7 +18,7 @@ function start() {
             socket.send(JSON.stringify({
               latitude: pos.coords.latitude,
               longitude: pos.coords.longitude,
-              accuracy: pos.coords.accuracy,
+              speed: pos.coords.speed,
             }));
           }
         },
@@ -44,6 +44,7 @@ function start() {
 
 </body>
 </html>
+
 
 
 
