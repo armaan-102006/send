@@ -15,10 +15,11 @@ function start() {
       watchId = navigator.geolocation.watchPosition(
         (pos) => {
           if (socket.readyState === WebSocket.OPEN) {
+            const speed = (pos.coords.speed !== null && pos.coords.speed !== undefined) ? pos.coords.speed : 0;
             socket.send(JSON.stringify({
               latitude: pos.coords.latitude,
               longitude: pos.coords.longitude,
-              speed: pos.coords.speed,
+              speed: speed,
             }));
           }
         },
@@ -44,6 +45,7 @@ function start() {
 
 </body>
 </html>
+
 
 
 
